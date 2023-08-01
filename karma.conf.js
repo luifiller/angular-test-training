@@ -16,7 +16,7 @@ module.exports = function (config) {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/ng-test1'),
+      dir: require('path').join(__dirname, './coverage/angular-test-training'),
       subdir: '.',
       reporters: [
         { type: 'html' },
