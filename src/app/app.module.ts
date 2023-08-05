@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UniqueIdService } from './shared/services/unique-id/unique-id.service';
 import { LikeWidgetModule } from './shared/components/like-widget/like-widget.module';
+import { PhotoFrameModule } from './shared/components/photo-frame/photo-frame.module';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { LikeWidgetModule } from './shared/components/like-widget/like-widget.mo
     BrowserModule,
     AppRoutingModule,
     LikeWidgetModule,
+    PhotoFrameModule,
   ],
   providers: [
     FontAwesomeModule,

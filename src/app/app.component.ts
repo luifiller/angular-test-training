@@ -10,7 +10,6 @@ export class AppComponent {
 
   public likes = 0;
 
-
   public like(): void {
     this.likes++;
   }
