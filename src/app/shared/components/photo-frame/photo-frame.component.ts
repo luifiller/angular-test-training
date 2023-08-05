@@ -34,6 +34,6 @@ export class PhotoFrameComponent implements OnInit, OnDestroy {
     }
 
     public like(): void {
-        this.liked.emit();
+        this.debounceSubject.next();
     }
 }
