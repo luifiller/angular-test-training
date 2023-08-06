@@ -1,73 +1,98 @@
 import { UniqueIdService } from './../../services/unique-id/unique-id.service';
-import { TestBed, ComponentFixture, ComponentFixtureAutoDetect } from '@angular/core/testing';
+import {
+  TestBed,
+  ComponentFixture,
+  ComponentFixtureAutoDetect,
+} from '@angular/core/testing';
 
-import { LikeWidgetComponent } from "./like-widget.component";
+import { LikeWidgetComponent } from './like-widget.component';
 import { LikeWidgetModule } from './like-widget.module';
 
 describe(LikeWidgetComponent.name, () => {
-    let fixture: ComponentFixture<LikeWidgetComponent> = null;
-    let component: LikeWidgetComponent = null;
-    let uniqueIdService: UniqueIdService;
+  let fixture: ComponentFixture<LikeWidgetComponent> = null;
+  let component: LikeWidgetComponent = null;
+  let uniqueIdService: UniqueIdService;
 
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LikeWidgetModule],
+      providers: [
+        {
+          provide: ComponentFixtureAutoDetect,
+          useValue: true,
+        },
+        UniqueIdService,
+      ],
+    }).compileComponents();
 
-    beforeEach( async () => {
-        await TestBed.configureTestingModule({
-            imports: [LikeWidgetModule],
-            providers: [
-                {
-                    provide: ComponentFixtureAutoDetect,
-                    useValue: true
-                },
-                UniqueIdService
-            ]
-        }).compileComponents();
+    fixture = TestBed.createComponent(LikeWidgetComponent);
+    uniqueIdService = TestBed.inject(UniqueIdService);
+    component = fixture.componentInstance;
+  });
 
-        fixture = TestBed.createComponent(LikeWidgetComponent);
-        uniqueIdService = TestBed.inject(UniqueIdService);
-        component = fixture.componentInstance;
-    })
+  it(`Should create component`, () => {
+    expect(component).toBeTruthy();
+  });
 
-    it(`Should create component`, () => {
-        expect(component).toBeTruthy();
-    })
-
-    it(`#${LikeWidgetComponent.prototype.ngOnInit.name} 
+  it(`#${LikeWidgetComponent.prototype.ngOnInit.name} 
         should automatically generate an ID when (@Input id) is NOT provided`, () => {
-        expect(component.id).toBeTruthy();
-    })
+    expect(component.id).toBeTruthy();
+  });
 
-    it(`#${LikeWidgetComponent.prototype.ngOnInit.name} 
+  it(`#${LikeWidgetComponent.prototype.ngOnInit.name} 
         should automatically generate an ID when (@Input id) is already provided`, () => {
-        component.id = 'existing-id';
-        const generateUniqueIdSpy = spyOn(uniqueIdService, 'generateUniqueIdWithPrefix');
+    component.id = 'existing-id';
+    const generateUniqueIdSpy = spyOn(
+      uniqueIdService,
+      'generateUniqueIdWithPrefix'
+    );
 
-        component.ngOnInit();
-    
-        expect(generateUniqueIdSpy).not.toHaveBeenCalled();
-        expect(component.id).toBe('existing-id');
-      });
+    component.ngOnInit();
 
-    it(`#${LikeWidgetComponent.prototype.ngOnChanges.name}
+    expect(generateUniqueIdSpy).not.toHaveBeenCalled();
+    expect(component.id).toBe('existing-id');
+  });
+
+  it(`#${LikeWidgetComponent.prototype.ngOnChanges.name}
     should update (spanAriaLabel) when changes are detected in (@Input likes)`, () => {
-        const valuesLikes = [0, 1, 4];
+    const valuesLikes = [0, 1, 4];
 
-        valuesLikes.forEach((value) => {
-            component.likes = value;
-            component.ngOnChanges();
+    valuesLikes.forEach((value) => {
+      component.likes = value;
+      component.ngOnChanges();
 
-            if (value === 1) {
-                expect(component.spanAriaLabel).toBe('1 person liked');
-            } else if (value === 0 || value > 1) {
-                expect(component.spanAriaLabel).toBe(`${value} people liked`);
-            }
-        })
-    })
+      if (value === 1) {
+        expect(component.spanAriaLabel).toBe('1 person liked');
+      } else if (value === 0 || value > 1) {
+        expect(component.spanAriaLabel).toBe(`${value} people liked`);
+      }
+    });
+  });
 
-    it(`#${LikeWidgetComponent.prototype.like.name}
+  it(`#${LikeWidgetComponent.prototype.like.name}
         should trigger (@Output liked) when called`, () => {
-        const spy = spyOn(component.liked, 'emit');
-        
-        component.like();
-        expect(spy).toHaveBeenCalled();
-    })
-})
+    const spy = spyOn(component.liked, 'emit');
+
+    component.like();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it(`(D) Should display number of likes when clicked`, (done) => {
+    fixture.detectChanges();
+
+    component.liked.subscribe(() => {
+      component.likes++;
+      fixture.detectChanges();
+
+      const elementCounter: HTMLElement =
+        fixture.nativeElement.querySelector('.like-counter');
+      expect(elementCounter.textContent.trim()).toBe('1');
+      done();
+    });
+
+    const elementWidget: HTMLElement = fixture.nativeElement.querySelector(
+      '.like-widget-container'
+    );
+    elementWidget.click();
+  });
+});
