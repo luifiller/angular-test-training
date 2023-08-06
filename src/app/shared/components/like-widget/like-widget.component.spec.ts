@@ -27,7 +27,7 @@ describe(LikeWidgetComponent.name, () => {
         component = fixture.componentInstance;
     })
 
-    it(`#should create component`, () => {
+    it(`Should create component`, () => {
         expect(component).toBeTruthy();
     })
 
